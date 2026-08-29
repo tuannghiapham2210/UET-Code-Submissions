@@ -1,0 +1,6 @@
+username = admin_nghia
+timeout = 5000
+maxConnections = 25
+
+server_region = ap-southeast-1
+retry_attempts = 3

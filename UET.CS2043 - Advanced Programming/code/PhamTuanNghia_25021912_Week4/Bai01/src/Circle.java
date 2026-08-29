@@ -1,0 +1,18 @@
+public class Circle extends Shape{
+    //constructor
+    public Circle(int x, int y){
+        super(x, y);
+    }
+
+    //implementing draw();
+    @Override
+    public void draw(){
+        System.out.println("Drawing circle at: " + "(" + this.x + "," + this.y + ")");
+    }
+
+    //implementing erase();
+    @Override
+    public void erase(){
+        System.out.println("Erasing circle at: " + "(" + this.x + "," + this.y + ")");
+    }
+}
