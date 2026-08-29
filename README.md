@@ -1,7 +1,7 @@
 # UET Code Submissions
 
 <div align="center">
-  <img src="https://media.tenor.com/71jJ6Y1qP4AAAAAC/anime-typing.gif" alt="Anime coding gif" width="300" />
+  <img src="./assets/anime-coding.gif" alt="Anime coding gif" width="300" />
 </div>
 
 Welcome to my repository for coursework and code submissions at VNU University of Engineering and Technology (UET). 
