@@ -1,10 +1,10 @@
 # UET Code Submissions
 
 <div align="center">
-  <img src="./assets/anime-coding.gif" alt="Anime coding gif" width="300" />
+  <img src="https://media1.tenor.com/m/jm_Sh7CSlq0AAAAC/anime.gif" alt="Anime GIF" width="300" />
 </div>
 
-Welcome to my repository for coursework and code submissions at VNU University of Engineering and Technology (UET). 
+Hello, welcome to my repository for coursework and code submissions at VNU University of Engineering and Technology (UET). 
 
 This repository serves as a personal archive for the various assignments, projects, and exercises I have completed during my studies.
 
@@ -30,7 +30,7 @@ Each folder typically contains the source code, input/output files, and any rela
 > [!WARNING]
 > This repository is intended **solely for personal archiving and educational reference**. 
 > 
-> *   **Current UET Students:** Please do **NOT** copy, submit, or use this code directly as your own for any assignments or exams. Doing so constitutes academic dishonesty and plagiarism, which can lead to severe consequences according to university policies.
+> *   **Current UET Students:** Please do **NOT** copy, submit, or use this code directly as your own for any assignments or exams ;) Doing so constitutes academic dishonesty and plagiarism and can also make you become more stupid :)
 > *   The code provided here may not be perfectly optimized, and there is no guarantee that it is completely error-free or covers all edge cases. Use it at your own risk.
 
 ## 📝 License
