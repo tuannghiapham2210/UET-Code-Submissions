@@ -1,6 +1,15 @@
-# Ignore compiled executables
+# Ignore compiled executables and binaries
 *.exe
+*.class
+/code/cpp/bin/
+/code/java/bin/
 /code/bin/
 
 # Ignore VS Code local settings
 .vscode/
+
+# Ignore lecture slides, theory and assignments (keep locally, untrack from git)
+/theory/
+/assignments/
+/assigments/
+*.pdf
