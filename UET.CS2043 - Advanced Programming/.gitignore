@@ -4,3 +4,6 @@
 
 # Ignore VS Code settings
 .vscode/
+
+# Ignore lecture slides
+lectures/
