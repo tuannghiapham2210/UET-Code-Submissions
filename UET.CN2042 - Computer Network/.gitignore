@@ -1,0 +1,51 @@
+# ==========================================
+# Computer Network (CN2042) - .gitignore
+# ==========================================
+
+# 1. Course Materials & Lectures
+lectures/
+theory/
+
+# 2. Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 3. Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# 4. Networking, Packet Captures & Logs
+*.log
+*.pcap
+*.pcapng
+*.cap
+
+# 5. Temporary & Output Files
+*.tmp
+*.temp
+
+# 6. Environment Configurations & Secrets
+.env
+.env.*
+!.env.example
+
+# 7. IDE & Editor Specific Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 8. OS Generated Files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 9. Jupyter Notebooks (if any)
+.ipynb_checkpoints/
