@@ -1,0 +1,96 @@
+# ==========================================
+# 1. Lecture Slides & Materials
+# ==========================================
+lectures/
+[Ll]ectures/
+
+# ==========================================
+# 2. Local Database Files & Backups
+# (Keep .sql script files; ignore data/binary/large backups)
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# SQL Server data & log files
+*.mdf
+*.ldf
+*.ndf
+
+# Database backups & compressed dumps
+*.bak
+*.sql.gz
+*.sql.zip
+*.dump
+
+# ==========================================
+# 3. Environment & Secrets (Credentials, Connection Strings)
+# ==========================================
+.env
+.env.*
+!.env.example
+secrets.json
+config.local.*
+
+# ==========================================
+# 4. Database Management Tools & IDEs
+# ==========================================
+# JetBrains (DataGrip, PyCharm, IntelliJ, etc.)
+.idea/
+*.iml
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.code-workspace
+
+# DBeaver
+.dbeaver/
+.dbeaver-data-sources.xml
+
+# ==========================================
+# 5. Logs & Temporary Directories
+# ==========================================
+*.log
+logs/
+temp/
+tmp/
+
+# ==========================================
+# 6. Operating System Files
+# ==========================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ==========================================
+# 7. Application / Connection Code (Python, Java, Node.js)
+# ==========================================
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Java
+*.class
+bin/
+target/
+
+# Node
+node_modules/
