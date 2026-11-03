@@ -76,8 +76,7 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return {@code true} if size is 0, {@code false} otherwise
      */
     public boolean isEmpty() {
-        // TODO: Implement isEmpty()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size() == 0;
     }
 
     /**
@@ -86,8 +85,7 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return the number of key-value pairs
      */
     public int size() {
-        // TODO: Implement size()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size(root);
     }
 
     /**
@@ -98,8 +96,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return number of nodes in subtree rooted at x, or 0 if x == null
      */
     private int size(Node x) {
-        // TODO: Implement size(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return 0;
+        }
+        return x.count;
     }
 
     /**
@@ -110,14 +110,16 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if key is null
      */
     public boolean contains(Key key) {
-        // TODO: Implement contains(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to contains() is null");
+        }
+        return get(key) != null;
     }
 
     /**
      * Returns the value associated with the given key (Slide 8).
      *
-     * Search algorithm:
+     * Search algorithm (iterative):
      * - Start at root.
      * - If key < current node's key: go left.
      * - If key > current node's key: go right.
@@ -129,8 +131,21 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if key is null
      */
     public Value get(Key key) {
-        // TODO: Implement get(Key key) (can be iterative or recursive)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("calls get() with a null key");
+        }
+        Node x = root;
+        while (x != null) {
+            int cmp = key.compareTo(x.key);
+            if (cmp < 0) {
+                x = x.left;
+            } else if (cmp > 0) {
+                x = x.right;
+            } else {
+                return x.val;
+            }
+        }
+        return null;
     }
 
     /**
@@ -144,8 +159,14 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if key is null
      */
     public void put(Key key, Value val) {
-        // TODO: Implement put(Key key, Value val)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("calls put() with a null key");
+        }
+        if (val == null) {
+            delete(key);
+            return;
+        }
+        root = put(root, key, val);
     }
 
     /**
@@ -164,8 +185,19 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return the updated subtree root
      */
     private Node put(Node x, Key key, Value val) {
-        // TODO: Implement put(Node x, Key key, Value val)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return new Node(key, val, 1);
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) {
+            x.left = put(x.left, key, val);
+        } else if (cmp > 0) {
+            x.right = put(x.right, key, val);
+        } else {
+            x.val = val;
+        }
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
     }
 
 
@@ -180,8 +212,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws NoSuchElementException if the BST is empty
      */
     public Key min() {
-        // TODO: Implement min()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls min() with empty symbol table");
+        }
+        return min(root).key;
     }
 
     /**
@@ -192,8 +226,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return node containing the minimum key
      */
     private Node min(Node x) {
-        // TODO: Implement min(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x.left == null) {
+            return x;
+        }
+        return min(x.left);
     }
 
     /**
@@ -203,8 +239,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws NoSuchElementException if the BST is empty
      */
     public Key max() {
-        // TODO: Implement max()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls max() with empty symbol table");
+        }
+        return max(root).key;
     }
 
     /**
@@ -215,8 +253,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return node containing the maximum key
      */
     private Node max(Node x) {
-        // TODO: Implement max(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x.right == null) {
+            return x;
+        }
+        return max(x.right);
     }
 
     /**
@@ -227,8 +267,17 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if key is null
      */
     public Key floor(Key key) {
-        // TODO: Implement floor(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to floor() is null");
+        }
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls floor() with empty symbol table");
+        }
+        Node x = floor(root, key);
+        if (x == null) {
+            return null;
+        }
+        return x.key;
     }
 
     /**
@@ -244,8 +293,22 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return node containing floor key, or null
      */
     private Node floor(Node x, Key key) {
-        // TODO: Implement floor(Node x, Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return null;
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) {
+            return x;
+        }
+        if (cmp < 0) {
+            return floor(x.left, key);
+        }
+        Node t = floor(x.right, key);
+        if (t != null) {
+            return t;
+        } else {
+            return x;
+        }
     }
 
     /**
@@ -256,20 +319,48 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if key is null
      */
     public Key ceiling(Key key) {
-        // TODO: Implement ceiling(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to ceiling() is null");
+        }
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls ceiling() with empty symbol table");
+        }
+        Node x = ceiling(root, key);
+        if (x == null) {
+            return null;
+        }
+        return x.key;
     }
 
     /**
      * Recursive helper for ceiling (symmetric to floor).
+     *
+     * Case 1: [k equals x.key]     -> return x
+     * Case 2: [k is greater than x.key] -> ceiling must be in right subtree -> ceiling(x.right, key)
+     * Case 3: [k is less than x.key] -> ceiling could be in left subtree:
+     *         Search left subtree. If found, return it; otherwise return x.
      *
      * @param x   the subtree root
      * @param key the query key
      * @return node containing ceiling key, or null
      */
     private Node ceiling(Node x, Key key) {
-        // TODO: Implement ceiling(Node x, Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return null;
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) {
+            return x;
+        }
+        if (cmp > 0) {
+            return ceiling(x.right, key);
+        }
+        Node t = ceiling(x.left, key);
+        if (t != null) {
+            return t;
+        } else {
+            return x;
+        }
     }
 
 
@@ -285,8 +376,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if key is null
      */
     public int rank(Key key) {
-        // TODO: Implement rank(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to rank() is null");
+        }
+        return rank(key, root);
     }
 
     /**
@@ -302,8 +395,17 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return number of keys in subtree x strictly less than key
      */
     private int rank(Key key, Node x) {
-        // TODO: Implement rank(Key key, Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return 0;
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) {
+            return rank(key, x.left);
+        } else if (cmp > 0) {
+            return 1 + size(x.left) + rank(key, x.right);
+        } else {
+            return size(x.left);
+        }
     }
 
     /**
@@ -314,8 +416,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if k is out of bounds
      */
     public Key select(int k) {
-        // TODO: Implement select(int k)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (k < 0 || k >= size()) {
+            throw new IllegalArgumentException("argument to select() is invalid: " + k);
+        }
+        return select(root, k).key;
     }
 
     /**
@@ -331,8 +435,17 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return node of rank k
      */
     private Node select(Node x, int k) {
-        // TODO: Implement select(Node x, int k)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return null;
+        }
+        int t = size(x.left);
+        if (t > k) {
+            return select(x.left, k);
+        } else if (t < k) {
+            return select(x.right, k - t - 1);
+        } else {
+            return x;
+        }
     }
 
 
@@ -346,8 +459,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws NoSuchElementException if the BST is empty
      */
     public void deleteMin() {
-        // TODO: Implement deleteMin()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            throw new NoSuchElementException("Symbol table underflow");
+        }
+        root = deleteMin(root);
     }
 
     /**
@@ -362,8 +477,12 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return updated subtree root
      */
     private Node deleteMin(Node x) {
-        // TODO: Implement deleteMin(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x.left == null) {
+            return x.right;
+        }
+        x.left = deleteMin(x.left);
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
     }
 
     /**
@@ -372,8 +491,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws NoSuchElementException if the BST is empty
      */
     public void deleteMax() {
-        // TODO: Implement deleteMax()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            throw new NoSuchElementException("Symbol table underflow");
+        }
+        root = deleteMax(root);
     }
 
     /**
@@ -383,8 +504,12 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return updated subtree root
      */
     private Node deleteMax(Node x) {
-        // TODO: Implement deleteMax(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x.right == null) {
+            return x.left;
+        }
+        x.right = deleteMax(x.right);
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
     }
 
     /**
@@ -398,8 +523,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if key is null
      */
     public void delete(Key key) {
-        // TODO: Implement delete(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("calls delete() with a null key");
+        }
+        root = delete(root, key);
     }
 
     /**
@@ -413,7 +540,7 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      *    x = min(t.right);
      *    x.right = deleteMin(t.right);
      *    x.left = t.left;
-     * 4. Update count: x.count = 1 + size(x.left) + size(x.right).
+     * 4. Update count: x.count = 1 + size(x.left) + size(x.right);
      * 5. Return x.
      *
      * @param x   the subtree root
@@ -421,8 +548,24 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return updated subtree root
      */
     private Node delete(Node x, Key key) {
-        // TODO: Implement delete(Node x, Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return null;
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) {
+            x.left = delete(x.left, key);
+        } else if (cmp > 0) {
+            x.right = delete(x.right, key);
+        } else {
+            if (x.right == null) return x.left;
+            if (x.left == null) return x.right;
+            Node t = x;
+            x = min(t.right);
+            x.right = deleteMin(t.right);
+            x.left = t.left;
+        }
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
     }
 
 
@@ -439,8 +582,18 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if lo or hi is null
      */
     public int size(Key lo, Key hi) {
-        // TODO: Implement size(Key lo, Key hi)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (lo == null) {
+            throw new IllegalArgumentException("first argument to size() is null");
+        }
+        if (hi == null) {
+            throw new IllegalArgumentException("second argument to size() is null");
+        }
+        if (lo.compareTo(hi) > 0) return 0;
+        if (contains(hi)) {
+            return rank(hi) - rank(lo) + 1;
+        } else {
+            return rank(hi) - rank(lo);
+        }
     }
 
     /**
@@ -450,8 +603,10 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return all keys in sorted order
      */
     public Iterable<Key> keys() {
-        // TODO: Implement keys()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            return new ArrayList<>();
+        }
+        return keys(min(), max());
     }
 
     /**
@@ -463,8 +618,15 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @throws IllegalArgumentException if lo or hi is null
      */
     public Iterable<Key> keys(Key lo, Key hi) {
-        // TODO: Implement keys(Key lo, Key hi)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (lo == null) {
+            throw new IllegalArgumentException("first argument to keys() is null");
+        }
+        if (hi == null) {
+            throw new IllegalArgumentException("second argument to keys() is null");
+        }
+        List<Key> list = new ArrayList<>();
+        keys(root, list, lo, hi);
+        return list;
     }
 
     /**
@@ -481,8 +643,20 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @param hi    maximum endpoint
      */
     private void keys(Node x, List<Key> list, Key lo, Key hi) {
-        // TODO: Implement keys(Node x, List<Key> list, Key lo, Key hi)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return;
+        }
+        int cmplo = lo.compareTo(x.key);
+        int cmphi = hi.compareTo(x.key);
+        if (cmplo < 0) {
+            keys(x.left, list, lo, hi);
+        }
+        if (cmplo <= 0 && cmphi >= 0) {
+            list.add(x.key);
+        }
+        if (cmphi > 0) {
+            keys(x.right, list, lo, hi);
+        }
     }
 
     /**
@@ -492,8 +666,7 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      */
     @Override
     public Iterator<Key> iterator() {
-        // TODO: Implement iterator()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return keys().iterator();
     }
 
 
@@ -508,8 +681,7 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return height of the tree
      */
     public int height() {
-        // TODO: Implement height()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return height(root);
     }
 
     /**
@@ -519,21 +691,21 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
      * @return height of subtree x, or -1 if x is null
      */
     private int height(Node x) {
-        // TODO: Implement height(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return -1;
+        }
+        return 1 + Math.max(height(x.left), height(x.right));
     }
 
 
     // =========================================================================
-    // 7. MAIN METHOD (Test harness for verifying your implementation)
+    // 7. MAIN METHOD (Test harness for verifying the implementation)
     // =========================================================================
     public static void main(String[] args) {
-        System.out.println("BST Template Code - Ready for implementation!");
-        System.out.println("Run this class after completing your TODOs to test operations.");
+        System.out.println("===============================================================");
+        System.out.println("   DEMO: BINARY SEARCH TREE (BST) IMPLEMENTATION");
+        System.out.println("===============================================================");
 
-        /*
-         * UNCOMMENT THE TEST CODE BELOW ONCE YOU HAVE IMPLEMENTED THE METHODS:
-         *
         BST<String, Integer> bst = new BST<>();
 
         // Test insertion sequence from Slide 4-10:
@@ -548,14 +720,14 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
         System.out.println("Total distinct keys inserted (size): " + bst.size()); // expected: 10
         System.out.println("Height of tree: " + bst.height());
 
-        System.out.println("\n--- 2. Testing keys() (Inorder Traversal - Sorted) ---");
+        System.out.println("\n--- 2. Testing keys() (Inorder Traversal - Sorted Order) ---");
         for (String s : bst.keys()) {
             System.out.println(s + " " + bst.get(s));
         }
 
         System.out.println("\n--- 3. Testing get() and contains() ---");
-        System.out.println("get('E'): " + bst.get("E")); // expected: 12
-        System.out.println("get('A'): " + bst.get("A")); // expected: 8
+        System.out.println("get('E'): " + bst.get("E")); // expected: 12 (overwritten value)
+        System.out.println("get('A'): " + bst.get("A")); // expected: 8  (overwritten value)
         System.out.println("contains('R'): " + bst.contains("R")); // true
         System.out.println("contains('Z'): " + bst.contains("Z")); // false
 
@@ -585,8 +757,8 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
         System.out.println("\n--- 8. Testing deleteMin() and deleteMax() ---");
         bst.deleteMin(); // removes 'A'
         bst.deleteMax(); // removes 'X'
-        System.out.println("New min: " + bst.min()); // expected: C
-        System.out.println("New max: " + bst.max()); // expected: S
+        System.out.println("New min after deleteMin: " + bst.min()); // expected: C
+        System.out.println("New max after deleteMax: " + bst.max()); // expected: S
         System.out.println("Size after deleteMin/Max: " + bst.size()); // expected: 8
 
         System.out.println("\n--- 9. Testing Hibbard deletion: delete('E') ---");
@@ -598,6 +770,5 @@ public class BST<Key extends Comparable<Key>, Value> implements Iterable<Key> {
             System.out.print(s + " ");
         }
         System.out.println();
-        */
     }
 }
