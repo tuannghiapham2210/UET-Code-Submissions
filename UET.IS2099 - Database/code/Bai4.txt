@@ -1,0 +1,33 @@
+-- Chuyển phiên làm việc về cơ sở dữ liệu classicmodels
+USE classicmodels;
+
+-- BÀI 1: Dùng toán tử IN tìm khách hàng ở Nantes và Lyon
+SELECT customerNumber, customerName, contactLastName, contactFirstName, phone, city, country
+FROM customers
+WHERE city IN ('Nantes', 'Lyon');
+
+-- BÀI 2: Dùng BETWEEN tìm các đơn hàng đã chuyển từ 10/1/2003 đến 10/3/2003
+SELECT orderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber
+FROM orders
+WHERE DATE(shippedDate) BETWEEN '2003-01-10' AND '2003-03-10';
+
+-- BÀI 3: Dùng LIKE tìm các nhóm hàng hóa có chứa từ 'CARS'
+SELECT productLine, textDescription
+FROM productlines
+WHERE productLine LIKE '%CARS%';
+
+
+-- BÀI 4: Truy vấn 10 sản phẩm có số lượng tồn kho lớn nhất
+SELECT productCode, productName, productLine, quantityInStock, buyPrice
+FROM products
+ORDER BY quantityInStock DESC
+LIMIT 10;
+
+
+-- BÀI 5: Danh sách sản phẩm kèm thuộc tính suy diễn: Tiền hàng tồn
+SELECT productCode, 
+       productName, 
+       quantityInStock, 
+       buyPrice, 
+       (quantityInStock * buyPrice) AS TienHangTon
+FROM products;

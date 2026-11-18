@@ -1,0 +1,61 @@
+-- BÀI 1: TẠO CSDL VÀ CÁC BẢNG (KÈM KHÓA CHÍNH)
+
+CREATE DATABASE IF NOT EXISTS My_Classicmodels;
+USE My_Classicmodels;
+
+CREATE TABLE productlines (
+    productLine VARCHAR(50) NOT NULL,
+    textDescription VARCHAR(4000),
+    htmlDescription MEDIUMTEXT,
+    image MEDIUMBLOB,
+    PRIMARY KEY (productLine)
+);
+
+CREATE TABLE products (
+    productCode VARCHAR(15) NOT NULL,
+    productName VARCHAR(70) NOT NULL,
+    productLine VARCHAR(50) NOT NULL,
+    productScale VARCHAR(10),
+    productVendor VARCHAR(50),
+    productDescription TEXT,
+    quantityInStock SMALLINT(6),
+    buyPrice DOUBLE,
+    PRIMARY KEY (productCode)
+);
+
+CREATE TABLE orders (
+    orderNumber INT(11) NOT NULL AUTO_INCREMENT,
+    orderDate DATETIME,
+    requiredDate DATETIME,
+    shippedDate DATETIME,
+    status VARCHAR(15),
+    comments TEXT,
+    customerNumber INT(11),
+    PRIMARY KEY (orderNumber)
+);
+
+CREATE TABLE orderdetails (
+    orderNumber INT(11) NOT NULL,
+    productCode VARCHAR(15) NOT NULL,
+    quantityOrdered INT(11),
+    priceEach DOUBLE,
+    orderLineNumber SMALLINT(6),
+    PRIMARY KEY (orderNumber, productCode)
+);
+
+-- BÀI 2: THÊM CÁC RÀNG BUỘC KHÓA NGOẠI (ON UPDATE CASCADE)
+
+ALTER TABLE products
+ADD CONSTRAINT fk_products_productlines
+FOREIGN KEY (productLine) REFERENCES productlines(productLine)
+ON UPDATE CASCADE;
+
+ALTER TABLE orderdetails
+ADD CONSTRAINT fk_orderdetails_orders
+FOREIGN KEY (orderNumber) REFERENCES orders(orderNumber)
+ON UPDATE CASCADE;
+
+ALTER TABLE orderdetails
+ADD CONSTRAINT fk_orderdetails_products
+FOREIGN KEY (productCode) REFERENCES products(productCode)
+ON UPDATE CASCADE;

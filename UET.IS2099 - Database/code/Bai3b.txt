@@ -1,0 +1,147 @@
+-- PHẦN A: THIẾT KẾ CƠ SỞ DỮ LIỆU VÀ NHẬP DỮ LIỆU MẪU
+
+DROP DATABASE IF EXISTS QLDT;
+CREATE DATABASE QLDT;
+USE QLDT;
+
+-- 1. Bảng SinhVien
+CREATE TABLE SinhVien (
+    MaSV VARCHAR(10) PRIMARY KEY,
+    HoTen VARCHAR(50) NOT NULL,
+    NgaySinh DATE,
+    DiemTB DOUBLE DEFAULT NULL,
+    XepLoai VARCHAR(20) DEFAULT NULL
+);
+
+-- 2. Bảng GiaoVien
+CREATE TABLE GiaoVien (
+    MaGV VARCHAR(10) PRIMARY KEY,
+    HoTen VARCHAR(50) NOT NULL,
+    Khoa VARCHAR(50)
+);
+
+-- 3. Bảng MonHoc
+CREATE TABLE MonHoc (
+    MaMH VARCHAR(10) PRIMARY KEY,
+    TenMH VARCHAR(100) NOT NULL,
+    SoTinChi INT NOT NULL CHECK (SoTinChi > 0)
+);
+
+-- 4. Bảng GiangDay
+CREATE TABLE GiangDay (
+    MaGV VARCHAR(10),
+    MaMH VARCHAR(10),
+    PRIMARY KEY (MaGV, MaMH),
+    FOREIGN KEY (MaGV) REFERENCES GiaoVien(MaGV) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (MaMH) REFERENCES MonHoc(MaMH) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- 5. Bảng KetQua
+CREATE TABLE KetQua (
+    MaSV VARCHAR(10),
+    MaMH VARCHAR(10),
+    MaGV VARCHAR(10),
+    Diem DOUBLE CHECK (Diem >= 0 AND Diem <= 10),
+    PRIMARY KEY (MaSV, MaMH),
+    FOREIGN KEY (MaSV) REFERENCES SinhVien(MaSV) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (MaGV, MaMH) REFERENCES GiangDay(MaGV, MaMH) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- DỮ LIỆU MẪU
+
+INSERT INTO GiaoVien (MaGV, HoTen, Khoa) VALUES
+('GV01', 'Nguyen Van A', 'Cong nghe Thong tin'),
+('GV02', 'Tran Thi B', 'Cong nghe Thong tin'),
+('GV03', 'Le Van C', 'Toan - Tin');
+
+INSERT INTO MonHoc (MaMH, TenMH, SoTinChi) VALUES
+('CS101', 'Co so du lieu', 3),
+('CS102', 'Cau truc du lieu va Giai thuat', 4),
+('MA101', 'Dai so tuyen tinh', 3),
+('CS103', 'Lap trinh nang cao', 3);
+
+INSERT INTO GiangDay (MaGV, MaMH) VALUES
+('GV01', 'CS101'),
+('GV02', 'CS101'), -- Môn CS101 có cả GV01 và GV02 dạy
+('GV01', 'CS102'), -- GV01 dạy cả CS101 và CS102
+('GV02', 'CS103'),
+('GV03', 'MA101');
+
+INSERT INTO SinhVien (MaSV, HoTen, NgaySinh) VALUES
+('SV01', 'Pham Tuan Nghia', '2007-10-22'),
+('SV02', 'Nguyen Duc Dat', '2007-03-15'),
+('SV03', 'Hoang Cong Manh', '2007-06-20'),
+('SV04', 'Tran Van Tit', '2007-12-05');
+
+-- Điểm mẫu: bố trí có cả điểm cao, điểm nợ môn (< 4.0)
+INSERT INTO KetQua (MaSV, MaMH, MaGV, Diem) VALUES
+('SV01', 'CS101', 'GV01', 9.5),
+('SV01', 'CS102', 'GV01', 9.0),
+('SV01', 'MA101', 'GV03', 10.0),
+
+('SV02', 'CS101', 'GV02', 7.5),
+('SV02', 'CS102', 'GV01', 6.0),
+('SV02', 'MA101', 'GV03', 3.0), -- SV02 trượt môn MA101 (3 tín chỉ)
+
+('SV03', 'CS101', 'GV01', 3.5), -- SV03 trượt môn CS101 (3 tín chỉ)
+('SV03', 'CS102', 'GV01', 2.0), -- SV03 trượt môn CS102 (4 tín chỉ)
+('SV03', 'CS103', 'GV02', 5.0),
+
+('SV04', 'CS101', 'GV02', 6.5),
+('SV04', 'MA101', 'GV03', 7.0);
+
+-- PHẦN B: TRUY VẤN VÀ CẬP NHẬT DỮ LIỆU THEO YÊU CẦU
+
+-- Tắt chế độ Safe Update để cho phép UPDATE dữ liệu qua bảng phụ
+SET SQL_SAFE_UPDATES = 0;
+
+-- 1. Tính điểm trung bình tích lũy (theo trọng số tín chỉ) và xếp loại
+UPDATE SinhVien sv
+JOIN (
+    SELECT 
+        kq.MaSV,
+        ROUND(SUM(kq.Diem * mh.SoTinChi) / SUM(mh.SoTinChi), 2) AS DiemTB_Tinh
+    FROM KetQua kq
+    JOIN MonHoc mh ON kq.MaMH = mh.MaMH
+    GROUP BY kq.MaSV
+) t ON sv.MaSV = t.MaSV
+SET 
+    sv.DiemTB = t.DiemTB_Tinh,
+    sv.XepLoai = CASE 
+        WHEN t.DiemTB_Tinh >= 8.5 THEN 'Xuat sac'
+        WHEN t.DiemTB_Tinh >= 7.0 THEN 'Kha'
+        WHEN t.DiemTB_Tinh >= 5.0 THEN 'Trung binh'
+        ELSE 'Yeu'
+    END;
+
+-- Bật lại Safe Update
+SET SQL_SAFE_UPDATES = 1;
+
+-- Xem bảng SinhVien sau khi cập nhật
+SELECT * FROM SinhVien;
+
+-- 2. Danh sách sinh viên còn nợ môn (điểm < 4) và tổng số tín chỉ chưa đạt
+SELECT 
+    sv.MaSV, 
+    sv.HoTen, 
+    sv.DiemTB, 
+    sv.XepLoai, 
+    SUM(mh.SoTinChi) AS TongTinChiNo
+FROM SinhVien sv
+JOIN KetQua kq ON sv.MaSV = kq.MaSV
+JOIN MonHoc mh ON kq.MaMH = mh.MaMH
+WHERE kq.Diem < 4.0
+GROUP BY sv.MaSV, sv.HoTen, sv.DiemTB, sv.XepLoai;
+
+-- 3. Danh sách sinh viên có điểm trung bình cao nhất
+SELECT MaSV, HoTen, DiemTB, XepLoai
+FROM SinhVien
+WHERE DiemTB = (SELECT MAX(DiemTB) FROM SinhVien);
+
+-- 4. Thống kê: Số sinh viên và phần trăm theo xếp loại
+SELECT 
+    XepLoai,
+    COUNT(*) AS SoLuongSV,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM SinhVien), 2) AS PhanTram
+FROM SinhVien
+GROUP BY XepLoai;

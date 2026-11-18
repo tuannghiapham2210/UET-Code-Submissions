@@ -1,0 +1,57 @@
+-- Chuyển ngữ cảnh sang cơ sở dữ liệu classicmodels
+USE classicmodels;
+
+-- BÀI 1: Lấy 50 ký tự đầu của mô tả sản phẩm (Title of products)
+SELECT productCode,
+       productName,
+       SUBSTRING(productDescription, 1, 50) AS `Title of products`
+FROM products;
+
+-- BÀI 2: Mô tả nhân viên theo định dạng 'Fullname, jobTitle.'
+SELECT employeeNumber,
+       CONCAT(firstName, ' ', lastName, ', ', jobTitle, '.') AS `Employee_Description`
+FROM employees;
+
+-- BÀI 3: Thay thế toàn bộ tên nhóm hàng 'Cars' thành 'Automobiles'
+-- Cách 1: Truy vấn xem trước kết quả hiển thị (Không thay đổi dữ liệu gốc)
+SELECT productLine,
+       REPLACE(productLine, 'Cars', 'Automobiles') AS newProductLine,
+       textDescription
+FROM productlines;
+
+-- Cách 2: Cập nhật trực tiếp vào cơ sở dữ liệu (Dùng UPDATE theo lý thuyết Bài 5)
+-- Cần tạm tắt kiểm tra khóa ngoại và safe updates vì productLine là khóa chính/khóa ngoại
+SET SQL_SAFE_UPDATES = 0;
+SET FOREIGN_KEY_CHECKS = 0;
+
+UPDATE productlines
+SET productLine = REPLACE(productLine, 'Cars', 'Automobiles');
+
+UPDATE products
+SET productLine = REPLACE(productLine, 'Cars', 'Automobiles');
+
+SET FOREIGN_KEY_CHECKS = 1;
+SET SQL_SAFE_UPDATES = 1;
+
+-- BÀI 4: Tìm 5 đơn hàng được vận chuyển sớm nhất so với ngày hẹn
+SELECT orderNumber,
+       orderDate,
+       requiredDate,
+       shippedDate,
+       DATEDIFF(requiredDate, shippedDate) AS DaysEarly
+FROM orders
+WHERE shippedDate IS NOT NULL
+ORDER BY DaysEarly DESC
+LIMIT 5;
+
+-- BÀI 5: Đơn hàng đặt trong tháng 5/2005 và ngày giao chưa xác định
+SELECT orderNumber,
+       orderDate,
+       requiredDate,
+       shippedDate,
+       status,
+       customerNumber
+FROM orders
+WHERE EXTRACT(YEAR FROM orderDate) = 2005
+  AND EXTRACT(MONTH FROM orderDate) = 5
+  AND shippedDate IS NULL;
