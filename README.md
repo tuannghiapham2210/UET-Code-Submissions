@@ -16,6 +16,7 @@ This repository serves as a personal archive for the various assignments, projec
 | `UET.CS2043` | [Advanced Programming](./UET.CS2043%20-%20Advanced%20Programming)<br>_Lập trình nâng cao_ | A+<br>9.5 |
 | `UET.MAT1051` | [Calculus 2](./UET.MAT1051%20-%20Calculus%202)<br>_Giải tích 2_ | A+<br>9.1 |
 | `UET.MAT1053` | [Linear Algebra](./UET.MAT1053%20-%20Linear%20Algebra)<br>_Đại số tuyến tính cho kỹ thuật_ | A+<br>9.0 |
+| `VNU1001` | Introduction to Digital Technology and Applications of Artificial Intelligence<br>_Nhập môn công nghệ số và ứng dụng trí tuệ nhân tạo_ | A+<br>9.0 |
 
 
 
