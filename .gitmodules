@@ -1,3 +1,6 @@
 [submodule "UET.CS2043 - Advanced Programming/online-auction-system"]
-	path = UET.CS2043 - Advanced Programming/online-auction-system
+	path = UET.CS2043 - Advanced Programming/Online Auction System Project
 	url = https://github.com/tuannghiapham2210/online-auction-system.git
+[submodule "UET.CS1058 - Data Structures and Algorithms/MergeSortAnalysis"]
+	path = UET.CS1058 - Data Structures and Algorithms/MergeSort Analysis Project
+	url = https://github.com/tuannghiapham2210/MergeSortAnalysis.git
