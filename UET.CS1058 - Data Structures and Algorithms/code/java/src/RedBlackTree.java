@@ -75,8 +75,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      *         otherwise
      */
     private boolean isRed(Node x) {
-        // TODO: Implement isRed(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return false;
+        }
+        return x.color == RED;
     }
 
     /**
@@ -86,8 +88,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return number of nodes in subtree x, or 0 if x is null
      */
     private int size(Node x) {
-        // TODO: Implement size(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return 0;
+        }
+        return x.count;
     }
 
     /**
@@ -96,8 +100,7 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return total number of key-value pairs
      */
     public int size() {
-        // TODO: Implement size()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size(root);
     }
 
     /**
@@ -106,8 +109,7 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return {@code true} if empty, {@code false} otherwise
      */
     public boolean isEmpty() {
-        // TODO: Implement isEmpty()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return root == null;
     }
 
     // =========================================================================
@@ -124,17 +126,15 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return the new root of the rotated subtree
      */
     private Node rotateLeft(Node h) {
-        // TODO: Implement rotateLeft(Node h)
-        // Steps:
-        // 1. assert isRed(h.right);
-        // 2. Node x = h.right;
-        // 3. h.right = x.left;
-        // 4. x.left = h;
-        // 5. x.color = h.color;
-        // 6. h.color = RED;
-        // 7. Update subtree counts (x.count and h.count)
-        // 8. return x;
-        throw new UnsupportedOperationException("Not implemented yet");
+        assert isRed(h.right);
+        Node x = h.right;
+        h.right = x.left;
+        x.left = h;
+        x.color = h.color;
+        h.color = RED;
+        x.count = h.count;
+        h.count = 1 + size(h.left) + size(h.right);
+        return x;
     }
 
     /**
@@ -147,17 +147,15 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return the new root of the rotated subtree
      */
     private Node rotateRight(Node h) {
-        // TODO: Implement rotateRight(Node h)
-        // Steps:
-        // 1. assert isRed(h.left);
-        // 2. Node x = h.left;
-        // 3. h.left = x.right;
-        // 4. x.right = h;
-        // 5. x.color = h.color;
-        // 6. h.color = RED;
-        // 7. Update subtree counts (x.count and h.count)
-        // 8. return x;
-        throw new UnsupportedOperationException("Not implemented yet");
+        assert isRed(h.left);
+        Node x = h.left;
+        h.left = x.right;
+        x.right = h;
+        x.color = h.color;
+        h.color = RED;
+        x.count = h.count;
+        h.count = 1 + size(h.left) + size(h.right);
+        return x;
     }
 
     /**
@@ -168,15 +166,12 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @param h the parent node of the temporary 4-node
      */
     private void flipColors(Node h) {
-        // TODO: Implement flipColors(Node h)
-        // Steps:
-        // 1. assert !isRed(h);
-        // 2. assert isRed(h.left);
-        // 3. assert isRed(h.right);
-        // 4. h.color = RED;
-        // 5. h.left.color = BLACK;
-        // 6. h.right.color = BLACK;
-        throw new UnsupportedOperationException("Not implemented yet");
+        assert !isRed(h);
+        assert isRed(h.left);
+        assert isRed(h.right);
+        h.color = RED;
+        h.left.color = BLACK;
+        h.right.color = BLACK;
     }
 
     // =========================================================================
@@ -192,8 +187,21 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if key is null
      */
     public Value get(Key key) {
-        // TODO: Implement get(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to get() is null");
+        }
+        Node x = root;
+        while (x != null) {
+            int cmp = key.compareTo(x.key);
+            if (cmp < 0) {
+                x = x.left;
+            } else if (cmp > 0) {
+                x = x.right;
+            } else {
+                return x.val;
+            }
+        }
+        return null;
     }
 
     /**
@@ -204,8 +212,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if key is null
      */
     public boolean contains(Key key) {
-        // TODO: Implement contains(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to contains() is null");
+        }
+        return get(key) != null;
     }
 
     /**
@@ -215,26 +225,21 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      *
      * @param key the key
      * @param val the value
-     * @throws IllegalArgumentException if key is null
+     * @throws IllegalArgumentException if key or val is null
      */
     public void put(Key key, Value val) {
-        // TODO: Implement put(Key key, Value val)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("first argument to put() is null");
+        }
+        if (val == null) {
+            throw new IllegalArgumentException("second argument to put() is null");
+        }
+        root = put(root, key, val);
+        root.color = BLACK;
     }
 
     /**
      * Recursive helper for insertion in a LLRB tree (Slide 37).
-     *
-     * Steps:
-     * 1. If h == null, insert at bottom and color it RED: return new Node(key, val,
-     * RED, 1).
-     * 2. Standard BST recursive descent (update value if cmp == 0).
-     * 3. Fix color invariants on the way up:
-     * - Right child red, left child black -> rotateLeft(h)
-     * - Left child red, left-left grandchild red -> rotateRight(h)
-     * - Both children red -> flipColors(h)
-     * 4. Update subtree count: h.count = 1 + size(h.left) + size(h.right).
-     * 5. Return h.
      *
      * @param h   the subtree root
      * @param key the key
@@ -242,8 +247,32 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return the balanced subtree root
      */
     private Node put(Node h, Key key, Value val) {
-        // TODO: Implement put(Node h, Key key, Value val)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (h == null) {
+            return new Node(key, val, RED, 1);
+        }
+
+        int cmp = key.compareTo(h.key);
+        if (cmp < 0) {
+            h.left = put(h.left, key, val);
+        } else if (cmp > 0) {
+            h.right = put(h.right, key, val);
+        } else {
+            h.val = val;
+        }
+
+        // Fix any right-leaning links, two consecutive left red links, or 4-nodes
+        if (isRed(h.right) && !isRed(h.left)) {
+            h = rotateLeft(h);
+        }
+        if (isRed(h.left) && isRed(h.left.left)) {
+            h = rotateRight(h);
+        }
+        if (isRed(h.left) && isRed(h.right)) {
+            flipColors(h);
+        }
+
+        h.count = 1 + size(h.left) + size(h.right);
+        return h;
     }
 
     // =========================================================================
@@ -257,8 +286,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws NoSuchElementException if the symbol table is empty
      */
     public Key min() {
-        // TODO: Implement min()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls min() with empty symbol table");
+        }
+        return min(root).key;
     }
 
     /**
@@ -268,8 +299,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return node with minimum key
      */
     private Node min(Node x) {
-        // TODO: Implement min(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x.left == null) {
+            return x;
+        }
+        return min(x.left);
     }
 
     /**
@@ -279,8 +312,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws NoSuchElementException if the symbol table is empty
      */
     public Key max() {
-        // TODO: Implement max()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls max() with empty symbol table");
+        }
+        return max(root).key;
     }
 
     /**
@@ -290,8 +325,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return node with maximum key
      */
     private Node max(Node x) {
-        // TODO: Implement max(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x.right == null) {
+            return x;
+        }
+        return max(x.right);
     }
 
     /**
@@ -302,8 +339,17 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if key is null
      */
     public Key floor(Key key) {
-        // TODO: Implement floor(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to floor() is null");
+        }
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls floor() with empty symbol table");
+        }
+        Node x = floor(root, key);
+        if (x == null) {
+            return null;
+        }
+        return x.key;
     }
 
     /**
@@ -314,8 +360,22 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return node containing floor key, or null
      */
     private Node floor(Node x, Key key) {
-        // TODO: Implement floor(Node x, Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return null;
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) {
+            return x;
+        }
+        if (cmp < 0) {
+            return floor(x.left, key);
+        }
+        Node t = floor(x.right, key);
+        if (t != null) {
+            return t;
+        } else {
+            return x;
+        }
     }
 
     /**
@@ -326,8 +386,17 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if key is null
      */
     public Key ceiling(Key key) {
-        // TODO: Implement ceiling(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to ceiling() is null");
+        }
+        if (isEmpty()) {
+            throw new NoSuchElementException("calls ceiling() with empty symbol table");
+        }
+        Node x = ceiling(root, key);
+        if (x == null) {
+            return null;
+        }
+        return x.key;
     }
 
     /**
@@ -338,8 +407,22 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return node containing ceiling key, or null
      */
     private Node ceiling(Node x, Key key) {
-        // TODO: Implement ceiling(Node x, Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return null;
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) {
+            return x;
+        }
+        if (cmp > 0) {
+            return ceiling(x.right, key);
+        }
+        Node t = ceiling(x.left, key);
+        if (t != null) {
+            return t;
+        } else {
+            return x;
+        }
     }
 
     /**
@@ -350,8 +433,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if key is null
      */
     public int rank(Key key) {
-        // TODO: Implement rank(Key key)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (key == null) {
+            throw new IllegalArgumentException("argument to rank() is null");
+        }
+        return rank(key, root);
     }
 
     /**
@@ -362,8 +447,17 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return number of keys in subtree x strictly less than key
      */
     private int rank(Key key, Node x) {
-        // TODO: Implement rank(Key key, Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return 0;
+        }
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) {
+            return rank(key, x.left);
+        } else if (cmp > 0) {
+            return 1 + size(x.left) + rank(key, x.right);
+        } else {
+            return size(x.left);
+        }
     }
 
     /**
@@ -374,8 +468,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if k is out of bounds
      */
     public Key select(int k) {
-        // TODO: Implement select(int k)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (k < 0 || k >= size()) {
+            throw new IllegalArgumentException("argument to select() is invalid: " + k);
+        }
+        return select(root, k).key;
     }
 
     /**
@@ -386,8 +482,17 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return node of rank k
      */
     private Node select(Node x, int k) {
-        // TODO: Implement select(Node x, int k)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return null;
+        }
+        int t = size(x.left);
+        if (t > k) {
+            return select(x.left, k);
+        } else if (t < k) {
+            return select(x.right, k - t - 1);
+        } else {
+            return x;
+        }
     }
 
     // =========================================================================
@@ -403,8 +508,20 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if lo or hi is null
      */
     public int size(Key lo, Key hi) {
-        // TODO: Implement size(Key lo, Key hi)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (lo == null) {
+            throw new IllegalArgumentException("first argument to size() is null");
+        }
+        if (hi == null) {
+            throw new IllegalArgumentException("second argument to size() is null");
+        }
+        if (lo.compareTo(hi) > 0) {
+            return 0;
+        }
+        if (contains(hi)) {
+            return rank(hi) - rank(lo) + 1;
+        } else {
+            return rank(hi) - rank(lo);
+        }
     }
 
     /**
@@ -413,8 +530,10 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return all keys in sorted order
      */
     public Iterable<Key> keys() {
-        // TODO: Implement keys()
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (isEmpty()) {
+            return new ArrayList<>();
+        }
+        return keys(min(), max());
     }
 
     /**
@@ -426,8 +545,15 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @throws IllegalArgumentException if lo or hi is null
      */
     public Iterable<Key> keys(Key lo, Key hi) {
-        // TODO: Implement keys(Key lo, Key hi)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (lo == null) {
+            throw new IllegalArgumentException("first argument to keys() is null");
+        }
+        if (hi == null) {
+            throw new IllegalArgumentException("second argument to keys() is null");
+        }
+        List<Key> list = new ArrayList<>();
+        keys(root, list, lo, hi);
+        return list;
     }
 
     /**
@@ -439,8 +565,20 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @param hi   maximum endpoint
      */
     private void keys(Node x, List<Key> list, Key lo, Key hi) {
-        // TODO: Implement keys(Node x, List<Key> list, Key lo, Key hi)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return;
+        }
+        int cmplo = lo.compareTo(x.key);
+        int cmphi = hi.compareTo(x.key);
+        if (cmplo < 0) {
+            keys(x.left, list, lo, hi);
+        }
+        if (cmplo <= 0 && cmphi >= 0) {
+            list.add(x.key);
+        }
+        if (cmphi > 0) {
+            keys(x.right, list, lo, hi);
+        }
     }
 
     /**
@@ -450,8 +588,7 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      */
     @Override
     public Iterator<Key> iterator() {
-        // TODO: Implement iterator()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return keys().iterator();
     }
 
     // =========================================================================
@@ -466,8 +603,7 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return height of the tree
      */
     public int height() {
-        // TODO: Implement height()
-        throw new UnsupportedOperationException("Not implemented yet");
+        return height(root);
     }
 
     /**
@@ -477,47 +613,51 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> implements Iterabl
      * @return height of subtree x, or -1 if x is null
      */
     private int height(Node x) {
-        // TODO: Implement height(Node x)
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (x == null) {
+            return -1;
+        }
+        return 1 + Math.max(height(x.left), height(x.right));
     }
 
     // =========================================================================
-    // 7. MAIN METHOD (Test harness for verifying your implementation)
+    // 7. MAIN METHOD (Test harness for verifying the implementation)
     // =========================================================================
     public static void main(String[] args) {
-        System.out.println("RedBlackTree Template Code - Ready for implementation!");
-        System.out.println("Uncomment the test cases below after completing all TODOs.");
+        System.out.println("===============================================================");
+        System.out.println("   DEMO: LEFT-LEANING RED-BLACK BST IMPLEMENTATION");
+        System.out.println("===============================================================");
 
-        /*
-         * UNCOMMENT THE TEST CODE BELOW ONCE YOU HAVE IMPLEMENTED THE METHODS:
-         *
-         * RedBlackTree<String, Integer> rbt = new RedBlackTree<>();
-         * 
-         * // Test insertion sequence from Slide 35-36:
-         * // S E A R C H E X A M P L E
-         * String[] keys = {"S", "E", "A", "R", "C", "H", "E", "X", "A", "M", "P", "L",
-         * "E"};
-         * int[] vals = { 0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10 , 11 , 12 };
-         * 
-         * for (int i = 0; i < keys.length; i++) {
-         * rbt.put(keys[i], vals[i]);
-         * }
-         * 
-         * System.out.println("Size: " + rbt.size()); // expected: 10
-         * System.out.println("Height: " + rbt.height()); // expected: <= 2 * lg(10)
-         * 
-         * System.out.println("\nKeys in sorted order:");
-         * for (String s : rbt.keys()) {
-         * System.out.println(s + " " + rbt.get(s));
-         * }
-         * 
-         * System.out.println("\nOrdered operations:");
-         * System.out.println("min(): " + rbt.min());
-         * System.out.println("max(): " + rbt.max());
-         * System.out.println("floor('G'): " + rbt.floor("G"));
-         * System.out.println("ceiling('G'): " + rbt.ceiling("G"));
-         * System.out.println("rank('P'): " + rbt.rank("P"));
-         * System.out.println("select(6): " + rbt.select(6));
-         */
+        RedBlackTree<String, Integer> rbt = new RedBlackTree<>();
+
+        // Test insertion sequence from Slide 35-36:
+        // S E A R C H E X A M P L E
+        String[] keys = { "S", "E", "A", "R", "C", "H", "E", "X", "A", "M", "P", "L", "E" };
+        int[] vals = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+
+        for (int i = 0; i < keys.length; i++) {
+            rbt.put(keys[i], vals[i]);
         }
+
+        System.out.println("Size: " + rbt.size()); // expected: 10
+        System.out.println("Height: " + rbt.height()); // expected: 3 (balanced, <= 2 * lg(10))
+
+        System.out.println("\nKeys in sorted order:");
+        for (String s : rbt.keys()) {
+            System.out.println(s + " " + rbt.get(s));
+        }
+
+        System.out.println("\nOrdered operations:");
+        System.out.println("min(): " + rbt.min());
+        System.out.println("max(): " + rbt.max());
+        System.out.println("floor('G'): " + rbt.floor("G"));
+        System.out.println("ceiling('G'): " + rbt.ceiling("G"));
+        System.out.println("rank('P'): " + rbt.rank("P"));
+        System.out.println("select(6): " + rbt.select(6));
+        System.out.println("size('C', 'R'): " + rbt.size("C", "R"));
+        System.out.print("keys('C', 'R'): ");
+        for (String s : rbt.keys("C", "R")) {
+            System.out.print(s + " ");
+        }
+        System.out.println();
+    }
 }
